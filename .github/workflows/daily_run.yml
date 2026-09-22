@@ -1,0 +1,36 @@
+name: Taegliche Lead-Pipeline
+on:
+  schedule:
+name: Taegliche Lead-Pipeline
+
+on:
+  schedule:
+    # 06:00 UTC = 08:00 Uhr Sommerzeit / 07:00 Uhr Winterzeit in Deutschland
+    - cron: "0 6 * * *"
+  workflow_dispatch: {} # erlaubt manuellen Start ueber den "Actions"-Tab
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Abhaengigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: Pipeline ausfuehren
+        env:
+          GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ENABLE_INSTAGRAM_CHECK: "false"
+        run: python main.py
+     # test comment
