@@ -15,15 +15,17 @@ Aufruf:
 
 from __future__ import annotations
 
-from config import SEARCH_QUERIES, SCORE_THRESHOLD, ENABLE_INSTAGRAM_CHECK
+from config import SCORE_THRESHOLD, ENABLE_INSTAGRAM_CHECK
 from sourcing import source_all_leads
 from website import fetch_website_html, fetch_website_text, extract_instagram_handle
 from enrichment import score_lead
+from query_suggestions import generate_and_store_suggestions
 
 # Supabase ist jetzt die Quelle fuers Dashboard. sheets_client.py bleibt im
 # Projekt erhalten (Backup/Uebergang) - um wieder zusaetzlich ins Sheet zu
 # schreiben, einfach den Import + den Aufruf in run() wieder einkommentieren.
 from supabase_client import (
+    get_active_search_queries,
     get_existing_place_ids,
     start_run,
     finish_run,
@@ -61,7 +63,10 @@ def run():
     existing_ids = get_existing_place_ids()
     print(f"{len(existing_ids)} Leads bereits in Supabase.")
 
-    raw_leads = source_all_leads(SEARCH_QUERIES)
+    search_queries = get_active_search_queries()
+    print(f"{len(search_queries)} aktive Suchbegriffe (aus Supabase/Dashboard).")
+
+    raw_leads = source_all_leads(search_queries)
     new_leads = [lead for lead in raw_leads if lead["place_id"] not in existing_ids]
     print(f"{len(raw_leads)} Leads gefunden, davon {len(new_leads)} neu.\n")
 
@@ -105,6 +110,14 @@ def run():
     print(f"  Warm  (-> automatisierte Ansprache): {warm_count}")
     print(f"  Kalt  (-> Anruf/Vor-Ort-Liste):       {kalt_count}")
     print(f"  Mischtyp:                             {mischtyp_count}")
+
+    print("\nSuchbegriff-Optimierung ...")
+    try:
+        generate_and_store_suggestions(run_id)
+    except Exception as exc:
+        # Optimierung ist "nice to have" - ein Fehler hier darf einen sonst
+        # erfolgreichen Lauf nicht als fehlgeschlagen markieren.
+        print(f"[Vorschlaege] Unerwarteter Fehler, uebersprungen: {exc}")
 
 
 if __name__ == "__main__":
