@@ -103,6 +103,7 @@ def _build_lead_row(lead: dict, run_id: str) -> dict:
         "rating": lead.get("rating"),
         "rating_count": lead.get("rating_count"),
         "run_id": run_id,
+        "source_query": lead.get("source_query"),
     }
 
 
@@ -141,3 +142,104 @@ def append_leads_batch(run_id: str, rows: list[tuple[dict, dict, dict | None]]) 
 
     client.table("leads").upsert(lead_records).execute()
     client.table("scoring").upsert(scoring_records).execute()
+
+
+# --- Suchbegriffe (Baustein 6: dashboard-gepflegte Queries + KI-Vorschlaege) --
+
+from config import FALLBACK_SEARCH_QUERIES
+
+
+@retry(times=3, delay_seconds=3, exceptions=(Exception,))
+def get_active_search_queries() -> list[str]:
+    """Liest die aktuell aktiven Suchbegriffe aus Supabase - dashboard-gepflegt
+    statt hartcodiert. Faellt auf FALLBACK_SEARCH_QUERIES zurueck, falls
+    Supabase (noch) keine aktiven Queries hat, damit ein leeres Ergebnis nie
+    versehentlich einen kompletten Lauf ohne Suche verursacht."""
+
+    client = _get_client()
+    result = (
+        client.table("search_queries")
+        .select("query")
+        .eq("status", "active")
+        .execute()
+    )
+    queries = [row["query"] for row in result.data]
+    if not queries:
+        print(
+            "[Suchbegriffe] Keine aktiven Queries in Supabase gefunden - "
+            "nutze eingebauten Fallback aus config.py."
+        )
+        return list(FALLBACK_SEARCH_QUERIES)
+    return queries
+
+
+@retry(times=3, delay_seconds=3, exceptions=(Exception,))
+def get_run_query_stats(run_id: str) -> list[dict]:
+    """Aggregiert pro Suchbegriff, wie viele der in DIESEM Lauf neu
+    gefundenen Leads warm/mischtyp/kalt/unklar bewertet wurden. Basis fuer
+    die KI-Vorschlagslogik in query_suggestions.py: Suchbegriffe mit hoher
+    warm-Quote sind das Muster, das wir mit neuen Staedten/Branchen
+    wiederholen wollen."""
+
+    client = _get_client()
+    result = (
+        client.table("leads")
+        .select("source_query, scoring(segment)")
+        .eq("run_id", run_id)
+        .execute()
+    )
+
+    stats: dict[str, dict[str, int]] = {}
+    for row in result.data:
+        query = row.get("source_query") or "(unbekannt)"
+        scoring_data = row.get("scoring")
+        if isinstance(scoring_data, list):
+            scoring_data = scoring_data[0] if scoring_data else {}
+        segment = (scoring_data or {}).get("segment") or "unklar"
+        bucket = stats.setdefault(
+            query, {"total": 0, "warm": 0, "mischtyp": 0, "kalt": 0, "unklar": 0}
+        )
+        bucket["total"] += 1
+        bucket[segment] = bucket.get(segment, 0) + 1
+
+    return [{"query": query, **counts} for query, counts in stats.items()]
+
+
+@retry(times=2, delay_seconds=3, exceptions=(Exception,))
+def get_existing_query_texts() -> set[str]:
+    """Alle bereits bekannten Suchbegriffe (aktiv, vorgeschlagen ODER
+    abgelehnt) - damit die KI nicht staendig denselben Vorschlag wiederholt."""
+
+    client = _get_client()
+    result = client.table("search_queries").select("query").execute()
+    return {row["query"] for row in result.data}
+
+
+@retry(times=2, delay_seconds=3, exceptions=(Exception,))
+def insert_query_suggestions(suggestions: list[dict]) -> int:
+    """Schreibt neue KI-Vorschlaege (status='suggested') nach Supabase.
+    Erwartet je Eintrag {'query': str, 'reasoning': str}. Ueberspringt
+    Duplikate stillschweigend (unique-Constraint auf 'query') statt den
+    ganzen Lauf daran scheitern zu lassen."""
+
+    if not suggestions:
+        return 0
+
+    client = _get_client()
+    written = 0
+    for s in suggestions:
+        try:
+            client.table("search_queries").insert(
+                {
+                    "query": s["query"],
+                    "status": "suggested",
+                    "source": "ai",
+                    "reasoning": s.get("reasoning", ""),
+                }
+            ).execute()
+            written += 1
+        except Exception as exc:
+            # Vermutlich Duplikat (unique-Constraint) - kein Grund, den Lauf
+            # abzubrechen, einfach ueberspringen.
+            print(f"[Vorschlaege] Konnte '{s.get('query')}' nicht speichern: {exc}")
+    return written
