@@ -108,7 +108,12 @@ Instagram: {instagram_block}
 def _call_claude(user_content: str) -> str:
     response = client.messages.create(
         model=ANTHROPIC_MODEL,
-        max_tokens=500,
+        # 500 war zu knapp: reasoning + opener sind freier deutscher Text,
+        # und bei laengeren Antworten wurde das JSON von Claude mitten im
+        # letzten Feld abgeschnitten (unvollstaendiges JSON -> Parsing
+        # scheiterte reihenweise, Leads fielen faelschlich auf Score 0
+        # zurueck). 1024 gibt genug Puffer fuer alle sechs Felder.
+        max_tokens=1024,
         system=SCORING_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_content}],
     )
@@ -161,9 +166,13 @@ def score_lead(lead: dict, website_text: str, instagram_data: dict | None = None
     try:
         result = _parse_scoring_response(raw_text)
     except json.JSONDecodeError:
+        # Volle Antwort loggen (nicht nur die ersten 200 Zeichen) - so ist
+        # im Actions-Log sofort erkennbar, ob die Antwort tatsaechlich
+        # abgeschnitten wurde (z.B. durch max_tokens) oder aus einem
+        # anderen Grund kein valides JSON war.
         print(
-            f"[Scoring] Konnte Antwort fuer '{lead['name']}' nicht parsen: "
-            f"{raw_text[:200]}"
+            f"[Scoring] Konnte Antwort fuer '{lead['name']}' nicht parsen "
+            f"({len(raw_text)} Zeichen): {raw_text}"
         )
         return dict(FALLBACK_RESULT)
 
