@@ -36,13 +36,23 @@ GOOGLE_SERVICE_ACCOUNT_JSON = os.environ.get(
 )
 
 # --- Sucheinstellungen ----------------------------------------------------
-SEARCH_QUERIES = [
+# Die Suchbegriffe (Branche + Stadt) liegen NICHT mehr hier, sondern in der
+# Supabase-Tabelle "search_queries" (status='active') - live pflegbar ueber
+# die Einstellungsseite im Dashboard, ohne Code-Aenderung/Redeploy. Siehe
+# supabase_client.get_active_search_queries(). Diese Liste hier ist nur noch
+# der Notfall-Fallback, falls Supabase mal keine aktiven Queries liefert.
+FALLBACK_SEARCH_QUERIES = [
     "Kosmetikstudio Krefeld",
     "Kosmetikstudio Mönchengladbach",
     "Beauty Studio Düsseldorf",
     "Laserklinik Ästhetik NRW",
     "Kosmetikstudio Duisburg",
 ]
+
+# Wie viele KI-Vorschlaege fuer neue Suchbegriffe pro Lauf maximal erzeugt
+# werden (landen als status='suggested' in Supabase, muessen im Dashboard
+# manuell genehmigt werden - siehe query_suggestions.py).
+MAX_QUERY_SUGGESTIONS_PER_RUN = 3
 
 ANTHROPIC_MODEL = "claude-sonnet-5"
 SHEET_TAB_NAME = "Leads"
