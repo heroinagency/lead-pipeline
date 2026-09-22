@@ -1,7 +1,4 @@
 name: Taegliche Lead-Pipeline
-on:
-  schedule:
-name: Taegliche Lead-Pipeline
 
 on:
   schedule:
@@ -33,4 +30,3 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           ENABLE_INSTAGRAM_CHECK: "false"
         run: python main.py
-     # test comment
