@@ -43,17 +43,31 @@ if ENABLE_INSTAGRAM_CHECK:
 
 def process_lead(lead: dict) -> tuple[dict, dict, dict | None]:
     """Reichert einen einzelnen Lead an und bewertet ihn. Gibt
-    (lead, scoring, instagram_data) zurueck - instagram_data ist None,
-    wenn das Modul aus ist oder nichts gefunden wurde."""
+    (lead, scoring, instagram_data) zurueck. Der Instagram-HANDLE wird
+    IMMER versucht zu finden (reines Auslesen der oeffentlichen Website
+    des Leads, kein Instagram-Zugriff, daher kein Risiko und immer an) -
+    nur die zusaetzlichen Profildaten (Follower/Posts/Bio) kommen dazu,
+    wenn ENABLE_INSTAGRAM_CHECK an ist (das liest Instagram selbst aus,
+    siehe instagram_check.py). None, wenn gar kein Handle gefunden wurde."""
 
     html = fetch_website_html(lead["website"])
     website_text = fetch_website_text(html)
 
     instagram_data = None
-    if ENABLE_INSTAGRAM_CHECK:
-        handle = extract_instagram_handle(html)
-        if handle:
+    handle = extract_instagram_handle(html)
+    if handle:
+        if ENABLE_INSTAGRAM_CHECK:
             instagram_data = get_instagram_profile(handle)
+        if not instagram_data:
+            # Instagram-Profil-Check aus oder fehlgeschlagen - trotzdem
+            # wenigstens den Handle festhalten, den finden wir immer.
+            instagram_data = {
+                "handle": handle,
+                "followers": None,
+                "posts": None,
+                "bio": None,
+                "is_private": None,
+            }
 
     scoring = score_lead(lead, website_text, instagram_data)
     return lead, scoring, instagram_data
