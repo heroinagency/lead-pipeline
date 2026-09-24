@@ -41,12 +41,18 @@ GOOGLE_SERVICE_ACCOUNT_JSON = os.environ.get(
 # die Einstellungsseite im Dashboard, ohne Code-Aenderung/Redeploy. Siehe
 # supabase_client.get_active_search_queries(). Diese Liste hier ist nur noch
 # der Notfall-Fallback, falls Supabase mal keine aktiven Queries liefert.
+# Bewusst branchengemischt (nicht nur Kosmetik) - der Notfall-Fallback soll
+# dieselbe Branchenvielfalt widerspiegeln wie die aktiven Supabase-Queries,
+# damit ein Supabase-Ausfall nicht versehentlich zurueck auf reines
+# Kosmetik-Sourcing faellt.
 FALLBACK_SEARCH_QUERIES = [
     "Kosmetikstudio Krefeld",
-    "Kosmetikstudio Mönchengladbach",
-    "Beauty Studio Düsseldorf",
-    "Laserklinik Ästhetik NRW",
-    "Kosmetikstudio Duisburg",
+    "Friseursalon Krefeld",
+    "Fitnessstudio Krefeld",
+    "Zahnarztpraxis Krefeld",
+    "Malerbetrieb Krefeld",
+    "Restaurant Krefeld",
+    "Rechtsanwaltskanzlei Krefeld",
 ]
 
 # Wie viele KI-Vorschlaege fuer neue Suchbegriffe pro Lauf maximal erzeugt
