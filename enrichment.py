@@ -21,27 +21,31 @@ client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 SCORING_SYSTEM_PROMPT = """\
 Du bewertest Leads fuer eine Video-Produktions- und Social-Media-Agentur \
-(HEROIN Agency), die Kosmetik- und Aesthetikstudios beim Aufbau ihrer \
-Personal Brand durch professionellen Video-Content unterstuetzt.
+(HEROIN Agency), die lokale Unternehmen und Dienstleister JEDER Branche \
+(Handwerk, Gastronomie, Gesundheit/Praxen, Beauty, Fitness, Kanzleien, \
+Handel, Bildung, u.v.m.) beim Aufbau ihrer Personal Brand durch \
+professionellen Video-Content unterstuetzt. Der Lead kann aus einer \
+beliebigen Branche stammen - bewerte jeden Lead nach denselben Kriterien, \
+unabhaengig davon, was fuer ein Geschaeft es ist.
 
 Methodik: Du suchst nach konkreten "Intent-Signalen" - beobachtbaren \
-Anzeichen, dass ein Studio bereits aktiv an seiner Sichtbarkeit arbeitet \
-(und damit den Wert von Content bereits versteht), aber an Qualitaet, \
-Konsistenz oder Kapazitaet scheitert. Ein Intent-Signal ist z.B. ein \
-aktiver, aber unprofessionell wirkender Account, eine persoenliche \
-Storytelling-Stimme auf der Website, oder erkennbare Selbstinszenierung \
-der Inhaberin. Je konkreter das Signal, desto verwertbarer der Lead - \
-"koennte Interesse haben" ist kein Intent-Signal, ein tatsaechlich \
-beobachtetes Verhalten schon.
+Anzeichen, dass ein Unternehmen bereits aktiv an seiner Sichtbarkeit \
+arbeitet (und damit den Wert von Content bereits versteht), aber an \
+Qualitaet, Konsistenz oder Kapazitaet scheitert. Ein Intent-Signal ist \
+z.B. ein aktiver, aber unprofessionell wirkender Account, eine \
+persoenliche Storytelling-Stimme auf der Website, oder erkennbare \
+Selbstinszenierung der Inhaberin/des Inhabers. Je konkreter das Signal, \
+desto verwertbarer der Lead - "koennte Interesse haben" ist kein \
+Intent-Signal, ein tatsaechlich beobachtetes Verhalten schon.
 
-Bewerte NICHT, ob das Studio Kunden gut bedient (das ist bereits gut, \
-siehe Google-Bewertungen) - bewerte ausschliesslich die Content- und \
-Sichtbarkeitsluecke, die HEROIN schliessen kann.
+Bewerte NICHT, ob das Unternehmen seine Kunden gut bedient (das ist \
+bereits gut, siehe Google-Bewertungen) - bewerte ausschliesslich die \
+Content- und Sichtbarkeitsluecke, die HEROIN schliessen kann.
 
 Ordne jeden Lead einem von drei Segmenten zu:
 - "warm": zeigt bereits Content-Ambition (aktiver Instagram-Account, \
-  persoenliche Website-Stimme, Storytelling der Inhaberin) - Bedarf ist \
-  da, nur die Qualitaet/Konsistenz fehlt.
+  persoenliche Website-Stimme, Storytelling der Inhaberin/des Inhabers) - \
+  Bedarf ist da, nur die Qualitaet/Konsistenz fehlt.
 - "kalt": keinerlei erkennbare Content- oder Personal-Brand-Ambition.
 - "mischtyp": irgendwo dazwischen, z.B. Text-Storytelling vorhanden, \
   aber kein erkennbarer Video-/Social-Kanal, oder sehr kleiner/inaktiver \
@@ -51,7 +55,10 @@ Falls Instagram-Daten vorliegen: viele Follower UND viele Posts UND ein \
 gepflegter Bio-Text deuten auf eine bereits etablierte Marke hin - das \
 ist tendenziell ein schwaecherer Fit (weniger Luecke zu schliessen), \
 nicht automatisch ein besserer Lead. Wenige Follower bei aktivem Posting \
-ist dagegen oft der ideale Fall: Ambition UND Luecke gleichzeitig vorhanden.
+ist dagegen oft der ideale Fall: Ambition UND Luecke gleichzeitig vorhanden. \
+Ein gefundener Instagram-HANDLE OHNE weitere Kennzahlen (Follower/Posts/Bio \
+leer) zaehlt selbst schon als schwaches Intent-Signal - das Unternehmen hat \
+sich zumindest einen Kanal angelegt.
 
 Leite daraus eine Kanal-Empfehlung ab:
 - "automatisiert": fuer "warm" - ein personalisierter E-Mail/WhatsApp-Opener \
@@ -95,7 +102,7 @@ def _build_user_message(lead: dict, website_text: str, instagram_data: dict | No
         instagram_block = "(kein Instagram-Handle gefunden oder Abfrage fehlgeschlagen)"
 
     return f"""\
-Studio: {lead['name']}
+Unternehmen: {lead['name']}
 Adresse: {lead['address']}
 Google-Bewertung: {lead.get('rating')} ({lead.get('rating_count')} Bewertungen)
 Oeffnungstage: {len(lead.get('opening_hours') or [])} von 7 Tagen hinterlegt
