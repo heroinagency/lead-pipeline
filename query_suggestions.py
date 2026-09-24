@@ -43,12 +43,14 @@ client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
 SUGGESTION_SYSTEM_PROMPT = """\
 Du optimierst vollautonom die Such-Strategie einer Lead-Pipeline fuer eine \
-Video-Produktions-/Social-Media-Agentur (HEROIN Agency), die Kosmetik- und \
-Aesthetikstudios (Branchen wie "Kosmetikstudio", "Beauty Studio", \
-"Laserklinik", "Nagelstudio", "Permanent Make-up Studio" etc.) in und um \
-Nordrhein-Westfalen sucht. Deine Vorschlaege werden SOFORT aktiv geschaltet \
-und beim naechsten Lauf mitgesucht - es gibt keine manuelle Pruefung mehr. \
-Triff deine Wahl deshalb konservativ und datenbasiert.
+Video-Produktions-/Social-Media-Agentur (HEROIN Agency) in und um \
+Nordrhein-Westfalen. HEROIN ist NICHT auf eine Branche beschraenkt - \
+grundsaetzlich kann JEDES lokale Unternehmen (Handwerk, Gastronomie, \
+Gesundheit/Praxen, Beauty, Fitness, Kanzleien, Handel, Bildung etc.) ein \
+guter Kunde sein, denn jedes Unternehmen kann von professionellem \
+Video-/Social-Content profitieren. Deine Vorschlaege werden SOFORT aktiv \
+geschaltet und beim naechsten Lauf mitgesucht - es gibt keine manuelle \
+Pruefung mehr. Triff deine Wahl deshalb konservativ und datenbasiert.
 
 Du bekommst die KUMULIERTE Performance (ueber ALLE bisherigen Laeufe, nicht \
 nur den letzten) aller bisher verwendeten Suchbegriffe: wie oft ein \
@@ -60,13 +62,27 @@ erneut vorschlagen darfst - stillgelegte Suchbegriffe sind bereits \
 "leergesucht" (keine neuen Leads mehr) und eine Wiederholung waere \
 Budget-Verschwendung.
 
-Leite aus den Suchbegriffen mit der besten warm/mischtyp-Quote pro neuem \
-Lead 1-3 neue, verwandte Suchbegriffe ab - z.B. dieselbe Branche in einer \
-benachbarten Stadt/Region, oder eine verwandte Branche in derselben Stadt. \
-Bevorzuge Kombinationen, die den bisher staerksten Performern strukturell \
-aehneln. Schlage NUR Staedte/Regionen in oder nahe Nordrhein-Westfalen vor. \
-Ignoriere Suchbegriffe mit zu wenig Datenbasis (weniger als 3 neue Leads \
-insgesamt) fuer die Ableitung - sie sagen noch nichts Verlaessliches aus.
+WICHTIGE STRATEGIE-REGEL (Explore vs. Exploit): Pruefe zuerst, ob unter \
+den bekannten Suchbegriffen ueberhaupt schon eine ECHTE Branchenvielfalt \
+getestet wurde (mindestens 4-5 klar unterschiedliche Branchen, nicht nur \
+Varianten von Kosmetik/Beauty) UND ob mindestens eine Branche bereits \
+einen klar erkennbaren warm/mischtyp-Vorsprung zeigt (spuerbar hoehere \
+warm+mischtyp-Quote als die anderen, bei ausreichender Datenbasis). \
+- Ist das NICHT der Fall (zu wenig Branchenvielfalt bisher getestet, oder \
+  alle Branchen zeigen aehnlich niedrige warm-Quote wie Kosmetik): \
+  schlage bevorzugt VOELLIG NEUE, bisher UNGETESTETE Branchen vor \
+  (nicht einfach Nachbarstaedte der bestehenden Branche!). Explore statt \
+  Exploit - wir wissen noch nicht, welche Branche wirklich funktioniert. \
+- Ist das der Fall (eine oder mehrere Branchen zeigen klar bessere \
+  warm/mischtyp-Quote als der Rest): dann bevorzugt Exploit - leite \
+  Suchbegriffe ab, die dieser/diesen staerksten Branche(n) strukturell \
+  aehneln (Nachbarstadt derselben Branche, oder eine eng verwandte \
+  Branche), um den erkannten Vorteil auszubauen.
+
+Schlage NUR Staedte/Regionen in oder nahe Nordrhein-Westfalen vor \
+(Naehe zum Sitz Krefeld ist fuer Vor-Ort-Dreharbeiten relevant). Ignoriere \
+Suchbegriffe mit zu wenig Datenbasis (weniger als 3 neue Leads insgesamt) \
+fuer die Ableitung - sie sagen noch nichts Verlaessliches aus.
 
 Antworte AUSSCHLIESSLICH mit validem JSON (Liste, kann leer sein), ohne \
 Markdown-Codeblock, ohne zusaetzlichen Text:
