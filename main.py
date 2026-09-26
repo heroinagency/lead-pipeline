@@ -15,11 +15,17 @@ Aufruf:
 
 from __future__ import annotations
 
+import re
 from collections import Counter
 
 from config import SCORE_THRESHOLD, ENABLE_INSTAGRAM_CHECK
 from sourcing import source_all_leads
-from website import fetch_website_html, fetch_website_text, extract_instagram_handle
+from website import (
+    fetch_website_html,
+    fetch_website_text,
+    extract_instagram_handle,
+    extract_email,
+)
 from enrichment import score_lead
 from query_suggestions import generate_and_store_suggestions
 
@@ -40,6 +46,12 @@ from supabase_client import (
 if ENABLE_INSTAGRAM_CHECK:
     from instagram_check import get_instagram_profile
 
+# Manche Unternehmen haben keinen eigenen Webauftritt und hinterlegen bei
+# Google Places stattdessen direkt ihre Instagram-Seite als "Website" - der
+# Handle steht dann schon in der URL selbst, ein Crawl waere sinnlos
+# (Instagram blockt anonyme Aufrufe seiner eigenen Profilseiten meist ohnehin).
+INSTAGRAM_URL_RE = re.compile(r"instagram\.com/([A-Za-z0-9._]+)", re.IGNORECASE)
+
 
 def process_lead(lead: dict) -> tuple[dict, dict, dict | None]:
     """Reichert einen einzelnen Lead an und bewertet ihn. Gibt
@@ -48,13 +60,27 @@ def process_lead(lead: dict) -> tuple[dict, dict, dict | None]:
     des Leads, kein Instagram-Zugriff, daher kein Risiko und immer an) -
     nur die zusaetzlichen Profildaten (Follower/Posts/Bio) kommen dazu,
     wenn ENABLE_INSTAGRAM_CHECK an ist (das liest Instagram selbst aus,
-    siehe instagram_check.py). None, wenn gar kein Handle gefunden wurde."""
+    siehe instagram_check.py). None, wenn gar kein Handle gefunden wurde.
+    Die E-Mail (falls auf der Website auffindbar) landet direkt im
+    zurueckgegebenen lead-dict unter 'email'."""
 
-    html = fetch_website_html(lead["website"])
-    website_text = fetch_website_text(html)
+    website = lead.get("website") or ""
+    instagram_url_match = INSTAGRAM_URL_RE.search(website)
+
+    if instagram_url_match:
+        handle = instagram_url_match.group(1).strip("/").lower()
+        website_text = (
+            "(Kein eigener Webauftritt - das Unternehmen nutzt seine "
+            "Instagram-Seite direkt als Online-Praesenz, siehe Handle unten)"
+        )
+        email = None
+    else:
+        html = fetch_website_html(website)
+        website_text = fetch_website_text(html)
+        handle = extract_instagram_handle(html)
+        email = extract_email(html)
 
     instagram_data = None
-    handle = extract_instagram_handle(html)
     if handle:
         if ENABLE_INSTAGRAM_CHECK:
             instagram_data = get_instagram_profile(handle)
@@ -68,6 +94,9 @@ def process_lead(lead: dict) -> tuple[dict, dict, dict | None]:
                 "bio": None,
                 "is_private": None,
             }
+
+    if email:
+        lead = {**lead, "email": email}
 
     scoring = score_lead(lead, website_text, instagram_data)
     return lead, scoring, instagram_data
