@@ -42,23 +42,39 @@ Bewerte NICHT, ob das Unternehmen seine Kunden gut bedient (das ist \
 bereits gut, siehe Google-Bewertungen) - bewerte ausschliesslich die \
 Content- und Sichtbarkeitsluecke, die HEROIN schliessen kann.
 
-Ordne jeden Lead einem von drei Segmenten zu:
-- "warm": zeigt bereits Content-Ambition (aktiver Instagram-Account, \
-  persoenliche Website-Stimme, Storytelling der Inhaberin/des Inhabers) - \
-  Bedarf ist da, nur die Qualitaet/Konsistenz fehlt.
-- "kalt": keinerlei erkennbare Content- oder Personal-Brand-Ambition.
-- "mischtyp": irgendwo dazwischen, z.B. Text-Storytelling vorhanden, \
-  aber kein erkennbarer Video-/Social-Kanal, oder sehr kleiner/inaktiver \
-  Instagram-Account.
+Ordne jeden Lead einem von drei Segmenten zu. WICHTIG: "warm" verlangt \
+NICHT zwingend einen vorhandenen Instagram-Kanal - eine erkennbare \
+persoenliche Ich-Erzaehlstimme auf der Website reicht dafuer bereits FUER \
+SICH ALLEIN aus. Das ist kein schwaecheres Signal als ein Instagram-Account, \
+sondern oft das staerkere: die Person denkt bereits in "meine Marke", ihr \
+fehlt nur die professionelle Video-Umsetzung - genau das ist der Idealkunde, \
+keine Vorstufe zu einem Idealkunden.
+- "warm": mindestens eines der folgenden Signale liegt vor - (a) eine klar \
+  persoenliche Ich-Erzaehlstimme auf der Website (Inhaberin/Inhaber erzaehlt \
+  ihre/seine Geschichte, Werte oder Beweggruende - unabhaengig davon, ob es \
+  einen Instagram-Kanal gibt), (b) ein vorhandener, aber unprofessionell \
+  wirkender oder kleiner/inaktiver Instagram-Account, (c) die Website IST \
+  eine Instagram-Seite (kein eigener Webauftritt) - das Unternehmen hat sich \
+  bereits fuer Social statt klassische Website entschieden und zeigt damit \
+  aktives Content-Bewusstsein.
+- "kalt": keinerlei persoenliche Ich-Stimme, keinerlei Instagram-Hinweis, \
+  nur eine rein sachliche/unpersoenliche Website oder gar keine Website.
+- "mischtyp": schwaechere/uneindeutige Signale - z.B. eine professionell \
+  wirkende, aber komplett unpersoenliche Unternehmens-Website (keine \
+  Ich-Stimme, aber erkennbarer Wert auf Aussendarstellung, etwa \
+  professionelle Fotos oder eine Team-Seite), oder ein bereits etablierter, \
+  grosser und professionell gepflegter Instagram-Account (weniger Luecke zu \
+  schliessen, aber nicht komplett kalt).
 
 Falls Instagram-Daten vorliegen: viele Follower UND viele Posts UND ein \
 gepflegter Bio-Text deuten auf eine bereits etablierte Marke hin - das \
 ist tendenziell ein schwaecherer Fit (weniger Luecke zu schliessen), \
-nicht automatisch ein besserer Lead. Wenige Follower bei aktivem Posting \
-ist dagegen oft der ideale Fall: Ambition UND Luecke gleichzeitig vorhanden. \
-Ein gefundener Instagram-HANDLE OHNE weitere Kennzahlen (Follower/Posts/Bio \
-leer) zaehlt selbst schon als schwaches Intent-Signal - das Unternehmen hat \
-sich zumindest einen Kanal angelegt.
+tendenziell "mischtyp" statt automatisch ein besserer Lead. Wenige Follower \
+bei aktivem Posting ist dagegen oft der ideale Fall: Ambition UND Luecke \
+gleichzeitig vorhanden -> "warm". Ein gefundener Instagram-HANDLE OHNE \
+weitere Kennzahlen (Follower/Posts/Bio leer) zaehlt selbst schon als \
+Intent-Signal fuer "warm" - das Unternehmen hat sich zumindest einen Kanal \
+angelegt oder nutzt Instagram sogar als einzige Praesenz.
 
 Leite daraus eine Kanal-Empfehlung ab:
 - "automatisiert": fuer "warm" - ein personalisierter E-Mail/WhatsApp-Opener \
