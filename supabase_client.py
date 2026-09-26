@@ -100,6 +100,7 @@ def _build_lead_row(lead: dict, run_id: str) -> dict:
         "address": lead["address"],
         "phone": lead.get("phone") or None,
         "website": lead["website"],
+        "email": lead.get("email") or None,
         "rating": lead.get("rating"),
         "rating_count": lead.get("rating_count"),
         "run_id": run_id,
